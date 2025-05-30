@@ -1,15 +1,13 @@
 import React, { useState } from "react";
 import "./app.css";
-
-// Import semua game
-import ShooterGame from "./games/ShooterGame";
-import SnakeGame from "./games/SnakeGame";
-import TicTacToe from "./games/TicTacToe";
-import FlappyBird from "./games/FlappyBird";
-import MemoryGame from "./games/MemoryGame";
-import CatchBall from "./games/CatchBall";
-import BasketballGame from "./games/BasketballGame";
-import TargetClicker from "./games/TargetClicker"; // ✅ Game ke-7
+import ShooterGame from "./Games/ShooterGame";
+import SnakeGame from "./Games/SnakeGame";
+import TicTacToe from "./Games/TicTacToe";
+import FlappyBird from "./Games/FlappyBird";
+import MemoryGame from "./Games/MemoryGame";
+import CatchBall from "./Games/CatchBall";
+import BasketballGame from "./Games/BasketballGame";
+import TargetClicker from "./Games/TargetClicker";
 
 export default function App() {
   const [game, setGame] = useState(null);
@@ -22,12 +20,12 @@ export default function App() {
     { id: "memory", name: "Memory Game", emoji: "🧠" },
     { id: "catch", name: "Catch the Ball", emoji: "🏀" },
     { id: "basket", name: "Basketball Toss", emoji: "⛹️‍♂️" },
-    { id: "clicker", name: "Target Clicker", emoji: "🎯" }, // ✅ Ditambahkan
+    { id: "clicker", name: "Target Clicker", emoji: "🎯" },
   ];
 
   return (
     <div className="app-container">
-      <h1>🎮 Koleksi Game Seru</h1>
+      <h1>🎮 Game Asik</h1>
 
       {!game ? (
         <div className="game-grid">
@@ -49,7 +47,7 @@ export default function App() {
           {game === "memory" && <MemoryGame />}
           {game === "catch" && <CatchBall />}
           {game === "basket" && <BasketballGame />}
-          {game === "clicker" && <TargetClicker />} {/* ✅ Game baru */}
+          {game === "clicker" && <TargetClicker />} 
         </>
       )}
     </div>
