@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./app.css";
+import BackgroundMusic from "/src/BackgroundMusic";
 import ShooterGame from "./Games/ShooterGame";
 import SnakeGame from "./Games/SnakeGame";
 import TicTacToe from "./Games/TicTacToe";
@@ -25,6 +26,7 @@ export default function App() {
 
   return (
     <div className="app-container">
+      <BackgroundMusic playing={!game} />
       <h1>🎮 Game Asik</h1>
 
       {!game ? (
@@ -38,7 +40,9 @@ export default function App() {
         </div>
       ) : (
         <>
-          <button className="back-button" onClick={() => setGame(null)}>⬅ Kembali</button>
+          <button className="back-button" onClick={() => setGame(null)}>
+            ⬅ Kembali
+          </button>
 
           {game === "shooter" && <ShooterGame />}
           {game === "snake" && <SnakeGame />}
@@ -47,7 +51,7 @@ export default function App() {
           {game === "memory" && <MemoryGame />}
           {game === "catch" && <CatchBall />}
           {game === "basket" && <BasketballGame />}
-          {game === "clicker" && <TargetClicker />} 
+          {game === "clicker" && <TargetClicker />}
         </>
       )}
     </div>

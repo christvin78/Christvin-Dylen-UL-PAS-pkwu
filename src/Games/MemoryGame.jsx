@@ -17,37 +17,36 @@ export default function MemoryGame() {
   const [moves, setMoves] = useState(0);
 
   useEffect(() => {
-    // Membuat pasangan kartu dan shuffle saat komponen mount
+    
     const initialCards = [];
     for (let i = 1; i <= CARD_PAIRS; i++) {
       initialCards.push(i);
-      initialCards.push(i);
+     
     }
     setCards(shuffleArray(initialCards));
   }, []);
 
   const handleClick = (index) => {
-    if (disable) return; // Jangan terima klik jika dalam status disable (tunggu animasi)
-    if (flipped.includes(index) || matched.includes(index)) return; // Abaikan klik pada kartu yang sudah dibalik atau sudah match
-
+    if (disable) return; 
+    if (flipped.includes(index) || matched.includes(index)) return; 
     if (flipped.length === 0) {
-      // Jika belum ada kartu dibalik
+     
       setFlipped([index]);
     } else if (flipped.length === 1) {
-      // Jika sudah ada satu kartu dibalik
+      
       setFlipped([flipped[0], index]);
-      setDisable(true); // Disable input sampai cek selesai
+      setDisable(true); 
       setMoves((m) => m + 1);
 
       if (cards[flipped[0]] === cards[index]) {
-        // Jika kedua kartu sama
+       
         setTimeout(() => {
           setMatched((prev) => [...prev, flipped[0], index]);
           setFlipped([]);
           setDisable(false);
         }, 800);
       } else {
-        // Jika tidak sama
+       
         setTimeout(() => {
           setFlipped([]);
           setDisable(false);
@@ -57,7 +56,7 @@ export default function MemoryGame() {
   };
 
   const resetGame = () => {
-    // Reset ulang permainan
+  
     const newCards = [];
     for (let i = 1; i <= CARD_PAIRS; i++) {
       newCards.push(i);

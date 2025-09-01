@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const GAME_WIDTH = 600;
-const GAME_HEIGHT = 400;
 const PLAYER_WIDTH = 50;
 const PLAYER_HEIGHT = 30;
 const ENEMY_SIZE = 40;
 const BULLET_WIDTH = 5;
 const BULLET_HEIGHT = 10;
-const ENEMY_SPEED = 2;
-const BULLET_SPEED = 7;
+const ENEMY_SPEED = 3;
+const BULLET_SPEED = 10;
 
 export default function ShooterGame() {
-  const [playerX, setPlayerX] = useState(GAME_WIDTH / 2 - PLAYER_WIDTH / 2);
+  const [gameSize, setGameSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+
+  const [playerX, setPlayerX] = useState(window.innerWidth / 2 - PLAYER_WIDTH / 2);
   const [bullets, setBullets] = useState([]);
   const [enemies, setEnemies] = useState([]);
   const [score, setScore] = useState(0);
@@ -19,17 +22,29 @@ export default function ShooterGame() {
 
   const keys = useRef({});
 
-  // Spawn musuh acak setiap 1.5 detik
+  // Resize listener
+  useEffect(() => {
+    const handleResize = () => {
+      setGameSize({ width: window.innerWidth, height: window.innerHeight });
+      setPlayerX((x) =>
+        Math.min(window.innerWidth - PLAYER_WIDTH, Math.max(0, x))
+      );
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Spawn enemies
   useEffect(() => {
     if (gameOver) return;
     const interval = setInterval(() => {
-      const x = Math.random() * (GAME_WIDTH - ENEMY_SIZE);
+      const x = Math.random() * (gameSize.width - ENEMY_SIZE);
       setEnemies((enemies) => [...enemies, { x, y: 0 }]);
-    }, 1500);
+    }, 1200);
     return () => clearInterval(interval);
-  }, [gameOver]);
+  }, [gameOver, gameSize.width]);
 
-  // Handle keyboard events
+  // Keyboard controls
   useEffect(() => {
     const downHandler = ({ key }) => {
       keys.current[key] = true;
@@ -45,7 +60,7 @@ export default function ShooterGame() {
     };
   }, []);
 
-  // Game loop update setiap 30ms
+  // Game loop
   useEffect(() => {
     if (gameOver) return;
 
@@ -54,7 +69,7 @@ export default function ShooterGame() {
         if (keys.current["ArrowLeft"]) {
           return Math.max(0, x - 10);
         } else if (keys.current["ArrowRight"]) {
-          return Math.min(GAME_WIDTH - PLAYER_WIDTH, x + 10);
+          return Math.min(gameSize.width - PLAYER_WIDTH, x + 10);
         }
         return x;
       });
@@ -66,7 +81,7 @@ export default function ShooterGame() {
               ...bullets,
               {
                 x: playerX + PLAYER_WIDTH / 2 - BULLET_WIDTH / 2,
-                y: GAME_HEIGHT - PLAYER_HEIGHT - BULLET_HEIGHT,
+                y: gameSize.height - PLAYER_HEIGHT - BULLET_HEIGHT - 10,
               },
             ];
           }
@@ -85,7 +100,7 @@ export default function ShooterGame() {
         enemies
           .map((e) => ({ ...e, y: e.y + ENEMY_SPEED }))
           .filter((e) => {
-            if (e.y + ENEMY_SIZE > GAME_HEIGHT) {
+            if (e.y + ENEMY_SIZE > gameSize.height) {
               setGameOver(true);
               return false;
             }
@@ -129,30 +144,25 @@ export default function ShooterGame() {
     }, 30);
 
     return () => clearInterval(interval);
-  }, [playerX, bullets, enemies, gameOver]);
+  }, [playerX, bullets, enemies, gameOver, gameSize]);
 
   const restart = () => {
     setGameOver(false);
     setScore(0);
     setBullets([]);
     setEnemies([]);
-    setPlayerX(GAME_WIDTH / 2 - PLAYER_WIDTH / 2);
+    setPlayerX(gameSize.width / 2 - PLAYER_WIDTH / 2);
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h2>Shooter Game</h2>
+    <div style={{ margin: 0, padding: 0, overflow: "hidden" }}>
       <div
         style={{
           position: "relative",
-          margin: "0 auto",
-          background: "#222",
-          width: GAME_WIDTH,
-          height: GAME_HEIGHT,
+          width: gameSize.width,
+          height: gameSize.height,
+          background: "#111",
           overflow: "hidden",
-          borderRadius: 10,
-          border: "3px solid #555",
-          userSelect: "none",
         }}
       >
         {/* Player */}
@@ -200,32 +210,32 @@ export default function ShooterGame() {
           ></div>
         ))}
 
-        {/* Game Over */}
+        {/* Game Over Overlay */}
         {gameOver && (
           <div
             style={{
               position: "absolute",
               top: 0,
               left: 0,
-              width: GAME_WIDTH,
-              height: GAME_HEIGHT,
+              width: "100%",
+              height: "100%",
               backgroundColor: "rgba(0,0,0,0.8)",
               color: "#fff",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: 24,
+              fontSize: 32,
             }}
           >
             <div>Game Over</div>
-            <div>Score: {score}</div>
+            <div style={{ marginTop: 10 }}>Score: {score}</div>
             <button
               onClick={restart}
               style={{
                 marginTop: 20,
                 padding: "10px 20px",
-                fontSize: 18,
+                fontSize: 20,
                 cursor: "pointer",
                 borderRadius: 5,
                 border: "none",
@@ -238,12 +248,19 @@ export default function ShooterGame() {
             </button>
           </div>
         )}
-      </div>
-      <div style={{ marginTop: 15, color: "#333", fontSize: 18 }}>
-        Skor: {score}
-      </div>
-      <div style={{ marginTop: 10, color: "#555" }}>
-        Gunakan tombol ← → untuk bergerak, dan Space untuk menembak.
+
+        {/* Score */}
+        <div
+          style={{
+            position: "absolute",
+            top: 20,
+            left: 20,
+            color: "#fff",
+            fontSize: 20,
+          }}
+        >
+          Score: {score}
+        </div>
       </div>
     </div>
   );

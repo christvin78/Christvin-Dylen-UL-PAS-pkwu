@@ -74,7 +74,6 @@ h3 {
   background-color: #6666aa;
 }
 
-/* Responsive tweaks */
 @media (max-width: 480px) {
   .game-card {
     padding: 1rem;
